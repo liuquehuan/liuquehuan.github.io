@@ -6,15 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2023 | Hexo</title>
+  <title>《动手学深度学习》笔记 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2023/index.html">
+  <meta name="description" content="学习花书过程中记的一些笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《动手学深度学习》笔记">
+<meta property="og:url" content="http://example.com/2023/12/31/%E3%80%8A%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="学习花书过程中记的一些笔记">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2023/12/31/%E3%80%8A%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E7%AC%94%E8%AE%B0/1.png">
+<meta property="article:published_time" content="2023-12-31T08:16:12.000Z">
+<meta property="article:modified_time" content="2024-01-03T15:28:20.410Z">
 <meta property="article:author" content="liuquehuan">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/12/31/%E3%80%8A%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E7%AC%94%E8%AE%B0/1.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -132,49 +138,279 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-《动手学深度学习》笔记" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/12/31/%E3%80%8A%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E7%AC%94%E8%AE%B0/" class="archive-article-date">
-  	<time datetime="2023-12-31T08:16:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-12-31</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/12/31/%E3%80%8A%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E7%AC%94%E8%AE%B0/">《动手学深度学习》笔记</a>
+    <h1 class="article-title" itemprop="name">
+      《动手学深度学习》笔记
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
+        
+        <a href="/2023/12/31/%E3%80%8A%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E7%AC%94%E8%AE%B0/" class="archive-article-date">
+  	<time datetime="2023-12-31T08:16:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-12-31</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>学习花书过程中记的一些笔记</p>
+<span id="more"></span>
+<h1 id="引言">1.引言</h1>
+<p><strong>端到端训练</strong>：将整个系统作为一个整体进行训练，从输入端到输出端直接学习，而不需要手动设计中间的特征提取或预处理步骤。</p>
+<p>传统的机器学习方法通常包含多个阶段，例如特征提取、特征选择和分类器训练。这些阶段需要手动设计和调整，可能需要领域专家的知识和经验。然而，在端到端训练中，这些中间步骤被消除，整个系统被视为一个黑盒子，直接从原始输入到最终输出进行训练。</p>
+<p>端到端训练的优点在于它可以自动地学习输入与输出之间的映射关系，无需手动定义特征或规则。这种端到端的学习过程可以通过深度神经网络实现，网络的层级结构可以自动地学习从低级特征到高级抽象的表示。</p>
+<p><strong>表示学习（Representation
+Learning）</strong>：通过自动学习数据的特征表示，从而发现数据中的有用信息和结构的过程。传统的机器学习方法通常需要手动设计和选择特征，这需要领域专家的知识和经验。而表示学习的目标是通过自动学习，从原始数据中学习到更有意义和有用的特征表示，而无需依赖人工设计的特征。深度学习是通过学习多层次的转换来进行多层次的表示学习。</p>
+<h1 id="预备知识">2.预备知识</h1>
+<h2 id="范数">范数</h2>
+<p>表示向量的<strong>大小</strong>，是一个将向量映射到标量的函数<span
+class="math inline">\(f\)</span>，需要满足以下性质：</p>
+<p>1.<span class="math inline">\(f(\alpha x)=\lvert \alpha \rvert
+f(x)\)</span></p>
+<p>2.<span class="math inline">\(f(x+y)\leq f(x)+f(y)\)</span></p>
+<p>3.<span class="math inline">\(f(x)\geq 0\)</span></p>
+<p>4.<span class="math inline">\(f(x)=0\iff \forall
+i,[x]_i=0\)</span></p>
+<p>常用的范数：<span
+class="math inline">\(L_2\)</span>范数，即欧式距离；<span
+class="math inline">\(L_1\)</span>范数，即各分量绝对值之和。它们都是更一般的<span
+class="math inline">\(L_p\)</span>范数的特例。矩阵有与<span
+class="math inline">\(L_2\)</span>范数类似的弗罗贝尼乌斯范数。</p>
+<h2 id="矩阵求导常用规则">矩阵求导常用规则</h2>
+<p>分子布局：一个<span
+class="math inline">\(n\)</span>维行向量对一个<span
+class="math inline">\(m\)</span>维列向量求导，结果是一个<span
+class="math inline">\(m*n\)</span>的矩阵，即行数由分母决定，列数由分子决定。为简单起见，之后在不至于引起歧义的情况下，忽略分子（或分母）的转置符号。</p>
+<p>1.对于<span class="math inline">\(A\in\mathbb{R}^{m*n},\nabla_x
+Ax=A^T\)</span></p>
+<p>2.对于<span class="math inline">\(A\in\mathbb{R}^{n*m},\nabla_x
+x_TA=A\)</span></p>
+<p>3.对于<span class="math inline">\(A\in\mathbb{R}^{n*n},\nabla_x
+x_TAx=(A+A^T)x\)</span></p>
+<p>4.<span class="math inline">\(\nabla_x \Vert x\Vert^2=\nabla_x
+x^Tx=2x\)</span>，这个规则对于矩阵的弗罗贝尼乌斯范数同样成立。</p>
+<h2 id="自动求导">自动求导</h2>
+<p>默认情况下，Pytroch会自动累积梯度，需要清除之前的值。可以使用detach()将某些计算移到计算图之外。即使计算图需要通过控制流（条件、循环、函数调用等），也可以得到正确的梯度。</p>
+<h1 id="线性神经网络">3.线性神经网络</h1>
+<h2 id="线性回归">线性回归</h2>
+<h3 id="损失函数">损失函数</h3>
+<p>量化目标的实际值与预测值之间的差距，通常选择非负数，数值越小表示损失越小，通常用平方误差函数：</p>
+<p><span class="math inline">\(l^{(i)}(\boldsymbol w,b)=\frac{1}{2}(\hat
+y^{(i)}-y^{(i)})^2\)</span></p>
+<p>为了度量模型在整个数据集上的预测质量，需要计算训练集中<span
+class="math inline">\(n\)</span>个样本上的损失均值<span
+class="math inline">\(L(\boldsymbol
+w,b)\)</span>。我们希望寻找一组参数<span
+class="math inline">\(\boldsymbol w^*,b^* = \arg \min_{\boldsymbol w,b}
+\ L(\boldsymbol w,b)\)</span>。</p>
+<p>可以证明，在高斯噪声的假设下，最小化均方误差等价于对线性模型的极大似然估计。</p>
+<h3 id="梯度下降">梯度下降</h3>
+<p>计算损失函数关于模型参数的导数（即梯度）。如果每次更新参数都要遍历整个数据集，那么执行会非常慢，所以通常在每次需要计算更新的时候随机抽取一小批样本，称为<strong>小批量随机梯度下降</strong>。</p>
+<h3 id="网络结构">网络结构</h3>
+<p>对于线性回归，每个输入都与每个输出（在线性回归问题中一般只有一个输出）连接，我们将这种变换称为<strong>全连接层</strong>或<strong>稠密层</strong>。</p>
+<h3 id="模型训练">模型训练</h3>
+<p>首先初始化参数，然后在每次迭代中，读取小批量训练样本，并通过模型获得一组预测。计算完损失后，进行反向传播，存储每个参数的梯度。最后，调用优化算法来更新模型的参数。</p>
+<h2 id="softmax回归">softmax回归</h2>
+<p><strong>独热编码（one-hot
+encoding）</strong>：独热编码是一个向量，它的分量和类别一样多，类别对应的分量设置为1，其它所有分量设置为0。</p>
+<h3 id="网络结构-1">网络结构</h3>
+<p>为了估计所有可能类别的条件概率，需要一个有多个输出的模型，每个类别对应一个输出（即<strong>未规范化的预测，logit</strong>）。为了用线性模型解决分类问题，需要和输出一样多的<strong>仿射函数（affine
+function）</strong>，每个输出对应一个仿射函数。</p>
+<p><img src="1.png" /></p>
+<p>如图，softmax回归是一个单层神经网络，只有一个全连接层。</p>
+<h3 id="softmax函数">softmax函数</h3>
+<p>softmax函数能将未规范化的预测变换为非负数且总和为1，同时让模型保持可导的性质，如下式：</p>
+<p><span class="math inline">\(\hat{\boldsymbol y} = softmax(\boldsymbol
+o)\)</span>，其中<span class="math inline">\(\hat y_j =
+\frac{exp(o_j)}{\sum_k exp(o_k)}\)</span></p>
+<h3 id="损失函数-1">损失函数</h3>
+<p>损失函数定义为</p>
+<p><span class="math inline">\(l(\boldsymbol y, \hat{\boldsymbol y}) =
+-\sum_{j = 1}^{q}y_jlog\hat y_j\)</span></p>
+<p>这个损失函数称为<strong>交叉熵损失（cross-entropy
+loss）</strong>，是分类问题最常用的损失之一。</p>
+<h1 id="多层感知机">4.多层感知机</h1>
+<h2 id="激活函数">激活函数</h2>
+<p>由于两个仿射函数叠加后还是仿射函数，即任意两个层都可以通过合并得到等价的单个层，所以需要在仿射变换之后对每个隐藏单元应用非线性的<strong>激活函数（activation
+function）</strong>。</p>
+<p><strong>线性修正单元（rectified linear unit，ReLU）</strong>：</p>
+<p><span class="math inline">\(ReLU(x) = max(x,0)\)</span></p>
+<p><strong>sigmoid</strong>函数：将一个定义域在<span
+class="math inline">\(\mathbb R\)</span>上的输入，变换为在区间<span
+class="math inline">\((0,1)\)</span>上的输出：</p>
+<p><span class="math inline">\(sigmoid(x) =
+\frac{1}{1+exp(-x)}\)</span></p>
+<p><strong>tanh（双曲正切）</strong>函数：与sigmoid类似，将输入转换到区间<span
+class="math inline">\((-1,1)\)</span>上。</p>
+<p><span class="math inline">\(tanh(x) =
+\frac{1-exp(-2x)}{1+exp(-2x)}\)</span></p>
+<h2 id="k折交叉验证">K折交叉验证</h2>
+<p>当训练数据稀缺时，我们甚至可能无法提供足够的数据来构成一个合适的验证集。
+这个问题的一个流行的解决方案是采用<strong>K折交叉验证</strong>。
+这里，原始训练数据被分成个<span
+class="math inline">\(K\)</span>个不重叠的子集。 然后，执行<span
+class="math inline">\(K\)</span>次模型训练和验证，每次在<span
+class="math inline">\(K-1\)</span>个子集上进行训练，
+并在剩余的一个子集（在该轮中没有用于训练的子集）上进行验证。
+最后，通过对<span
+class="math inline">\(K\)</span>次实验的结果取平均来估计训练和验证误差。</p>
+<h2 id="欠拟合和过拟合">欠拟合和过拟合</h2>
+<p>简单地说，欠拟合表现为模型无法继续减小训练误差，过拟合表现为训练误差远小于验证误差。用于对抗过拟合的技术称为<strong>正则化（regularization）</strong>。</p>
+<h2 id="权重衰减">权重衰减</h2>
+<p>权重衰减是使用最广泛的正则化技术之一，通常也称为<strong>L2正则化</strong>。这项技术通过函数与零的距离来度量函数的复杂度。一种简单的方法是通过线性函数<span
+class="math inline">\(f(\boldsymbol x) = \boldsymbol w^T \boldsymbol
+x\)</span>中的权重向量的某个范数来度量其复杂性， 例如<span
+class="math inline">\(\Vert \boldsymbol w
+\Vert^2\)</span>。要保证权重向量比较小，
+最常用方法是将其范数作为惩罚项加到最小化损失的问题中，并用一个<strong>正则化常数<span
+class="math inline">\(\lambda\)</span></strong>来权衡这个新的额外惩罚的损失。使用<span
+class="math inline">\(L_2\)</span>范数的一个原因是它对权重向量的大分量施加了巨大的惩罚。
+这使得我们的学习算法偏向于在大量特征上均匀分布权重的模型。相比之下，<span
+class="math inline">\(L_1\)</span>惩罚会导致模型将权重集中在一小部分特征上，
+而将其他权重清除为零。 这称为<strong>特征选择（feature
+selection）</strong>，这可能是其他场景下需要的。</p>
+<p>通常不对偏置项进行正则化。</p>
+<h2 id="暂退法">暂退法</h2>
+<p><strong>暂退法（dropout）</strong>在前向传播过程中，计算每一内部层的同时注入噪声，这已经成为训练神经网络的常用技术。在整个训练过程的每一次迭代中，标准暂退法包括在计算下一层之前将当前层中的一些节点置零。</p>
+<p>在标准暂退法正则化中，通过按保留（未丢弃）的节点的分数进行规范化来消除每一层的偏差。
+换言之，每个中间活性值<span
+class="math inline">\(h\)</span>以<strong>暂退概率</strong><span
+class="math inline">\(p\)</span>由随机变量<span
+class="math inline">\(h&#39;\)</span>替换，如下所示：</p>
+<p><span class="math inline">\(h&#39; = \begin{cases} 0, \quad 概率为p
+\\ \frac{h}{1-p}, \quad 其它情况 \end{cases}\)</span></p>
+<p>暂退法一般只在训练期间使用。在测试时，暂退层仅传递数据。</p>
+<h2 id="前向传播反向传播和计算图">前向传播、反向传播和计算图</h2>
+<p><strong>前向传播（forward propagation或forward
+pass）</strong>：按顺序（从输入层到输出层）计算和存储神经网络中每层的结果。</p>
+<p><strong>反向传播（backward
+propagation或backpropagation）</strong>：计算神经网络参数梯度的方法，该方法根据微积分中的链式法则，按相反的顺序从输出层到输入层遍历网络。该算法存储了计算某些参数梯度时所需的任何中间变量（偏导数）。</p>
+<p>注意，反向传播重复利用前向传播中存储的中间值，以避免重复计算。
+带来的影响之一是我们需要保留中间值，直到反向传播完成。
+这也是训练比单纯的预测需要更多的内存（显存）的原因之一。
+此外，这些中间值的大小与网络层的数量和批量的大小大致成正比。
+因此，使用更大的批量来训练更深层次的网络更容易导致<strong>内存不足</strong>。</p>
+<h2 id="数值稳定性和模型初始化">数值稳定性和模型初始化</h2>
+<p><strong>梯度爆炸（gradient
+exploding）</strong>：参数更新过大，破坏了模型的稳定收敛。</p>
+<p><strong>梯度消失（gradient
+vanishing）</strong>：参数更新过小，在每次更新时几乎不会移动，导致模型无法学习。</p>
+<p>随机初始化可以打破神经网络的对称性。一些初始化方法有助于提高数值稳定性，如<strong>Xavier初始化</strong>从均值为0，方差<span
+class="math inline">\(\sigma^2 = 2/(n_{in} +
+n_{out})\)</span>的高斯分布中抽样权重。</p>
+<h2 id="预测房价">预测房价</h2>
+<ul>
+<li>常用的预处理方法：将实值数据重新缩放为零均值和单位方差；用平均值替换缺失值。</li>
+<li>将类别特征转换为指示符特征，可以使我们把这个特征当作一个独热向量来对待。</li>
+<li>对数对于相对误差很有用。</li>
+</ul>
+<h1 id="深度学习计算">5.深度学习计算</h1>
+<p><strong>块（block）</strong>：可以描述单个层、有多个层组成的组件或整个模型本身。在PyTorch中可以用nn.Sequential实例化，它是一种特殊的Module，维护一个由Module组成的有序列表。</p>
+<p>Pytorch要求进入计算的所有输入数据都在同一设备上，无论是CPU还是GPU。</p>
+<p>不经意地移动数据可能会显著降低性能。</p>
 
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2023/12/31/%E3%80%8A%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-  
-    </div></section>
+
   
 
-    
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
+  
+
+  
+
+  
+
+  
 
 
           </div>
@@ -197,8 +433,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
