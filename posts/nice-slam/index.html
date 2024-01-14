@@ -17,7 +17,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/posts/nice-slam/1.png">
 <meta property="article:published_time" content="2024-01-14T10:33:17.000Z">
-<meta property="article:modified_time" content="2024-01-14T10:57:20.278Z">
+<meta property="article:modified_time" content="2024-01-14T12:22:14.026Z">
 <meta property="article:author" content="liuquehuan">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/posts/nice-slam/1.png">
@@ -49,7 +49,7 @@
 <div class="intrude-less">
 	<header id="header" class="inner">
 		<a href="/" class="profilepic">
-			<img src="https://s2.loli.net/2024/01/03/N4Tngay1zt2jkHO.jpg" class="js-avatar">
+			<img src="https://s2.loli.net/2024/01/14/yVcUhYmDAQgLHnN.jpg" class="js-avatar">
 		</a>
 		<hgroup>
 		  <h1 class="header-author"><a href="/"></a></h1>
@@ -99,7 +99,7 @@
 	<div class="intrude-less">
 		<header id="header" class="inner">
 			<div class="profilepic">
-				<img src="https://s2.loli.net/2024/01/03/N4Tngay1zt2jkHO.jpg" class="js-avatar">
+				<img src="https://s2.loli.net/2024/01/14/yVcUhYmDAQgLHnN.jpg" class="js-avatar">
 			</div>
 			<hgroup>
 			  <h1 class="header-author js-header-author"></h1>
@@ -160,16 +160,16 @@
       
         <p>萌新的NICE-SLAM阅读笔记</p>
 <span id="more"></span>
-<h1 id="摘要">摘要</h1>
+<h1 id="abstract">Abstract</h1>
 <p>神经隐式表示最近在各种领域显示出鼓舞人心的结果，包括在同时定位与建图（SLAM）方面的有希望的进展。然而，现有方法产生过度平滑的场景重建，并且难以扩展到大型场景。这些限制主要是由于它们简单的全连接网络架构没有结合观察中的局部信息。在本文中，我们提出了NICE-SLAM，一种密集的SLAM系统，通过引入分层场景表示来结合多级局部信息。利用预训练的几何先验来优化这种表示，可以实现大型室内场景的详细重建。与近期的神经隐式SLAM系统相比，我们的方法更具可扩展性、效率和鲁棒性。在五个挑战性数据集上的实验展示了NICE-SLAM在建图和跟踪质量方面的竞争性结果。项目页面：https://pengsongyou.github.io/nice-slam.</p>
-<h1 id="引入">引入</h1>
+<h1 id="introduction">Introduction</h1>
 <p>SLAM系统需要：实时、能够对未观察区域做出合理预测、能被扩展到大场景、鲁棒。传统SLAM方法不具有预测能力，而基于学习的SLAM方法大多只能在小场景中工作，如iMAP。</p>
 <p>iMAP的主要局限在于它使用单个MLP表示整个场景。近期研究表明，建立多层次的基于网格的特征有助于保存几何特征并重建复杂场景，但这些方法不具有实时性。</p>
 <p>我们致力于结合层次化场景表示和神经隐式表示两者的优点。我们提出了NICE-SLAM，一个具有预测能力且能够应用于大场景的RGB-D密集SLAM系统，其核心是分层的，基于网格的神经隐式编码。与全局神经场景编码不同，这种表示运行局部更新，这对大尺度方法来说是必须的。</p>
-<h1 id="相关工作">相关工作</h1>
+<h1 id="related-work">Related Work</h1>
 <h2 id="密集视觉slam">密集视觉SLAM</h2>
 <p>地图表示可以分为两大类：一类把三维几何锚定到特点关键帧上，通常用深度地图表示；一类把三维几何锚定到世界坐标系上，并且可以进一步划分为表面元素或体素网格，通常用于储存占用或TSDF值。我们同样采用体素网格表示，但是存储的是几何图形的隐式编码，在建图的过程中直接对其进行优化。这种方式允许我们在较低的网格分辨率下实现更精确的几何图形。</p>
-<h1 id="算法框架">算法框架</h1>
+<h1 id="methods">Methods</h1>
 <h2 id="分层场景表示">分层场景表示</h2>
 <p>分层场景表示结合了多层次网格特征和预先训练的解码器的占用预测。几何结构被编码到三个特征网格中，对应三个MLP解码器，分别是粗糙层(coarse)、中间层(mid-level)和精细层(fine-level)。</p>
 <p><img src="1.png" /></p>
