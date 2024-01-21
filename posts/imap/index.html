@@ -36,7 +36,9 @@
 
   
 
-<meta name="generator" content="Hexo 6.3.0"></head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 <body>
   <div id="container" q-class="show:isCtnShow">
@@ -225,7 +227,7 @@ class="math inline">\(M\)</span>个像素的渲染颜色和测量颜色的L1范�
 class="math inline">\(e_i^p[u,v] = |I_i[u,v] -
 \hat{I}_i[u,v]|\)</span>，即</p>
 <p><span class="math inline">\(L_p = \frac{1}{M}
-\sum_{i=1}^{W}\sum_{(u,v) \in s_i} e_i^p[u,v]\)</span></p>
+\sum_{i=1}^{W}\sum_{(u,v) \in s_i}  e_i^p[u,v]\)</span></p>
 <p>深度几何误差为深度的差<span class="math inline">\(e_i^g[u,v] =
 |D_i[u,v] -
 \hat{D}_i[u,v]|\)</span>，并且使用深度值方差作为标准化因子，使不确定区域（如物体边界）的损失的对应权重下降。</p>
