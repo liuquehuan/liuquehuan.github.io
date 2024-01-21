@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2024/1 | Hexo</title>
+  <title>NeRF学习笔记 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2024/01/index.html">
+  <meta name="description" content="萌新的NeRF学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NeRF学习笔记">
+<meta property="og:url" content="http://example.com/posts/nerf">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="萌新的NeRF学习笔记">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-01-21T13:14:05.000Z">
+<meta property="article:modified_time" content="2024-01-21T13:16:01.558Z">
 <meta property="article:author" content="liuquehuan">
 <meta name="twitter:card" content="summary">
   
@@ -132,157 +136,153 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-NeRF学习笔记" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/slambook" class="archive-article-date">
-  	<time datetime="2024-01-21T13:14:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-21</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/slambook">十四讲学习笔记</a>
+    <h1 class="article-title" itemprop="name">
+      NeRF学习笔记
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/nerf" class="archive-article-date">
+        
+        <a href="/posts/nerf" class="archive-article-date">
   	<time datetime="2024-01-21T13:14:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-21</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/nerf">NeRF学习笔记</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>萌新的NeRF学习笔记</p>
+<span id="more"></span>
 
-        <div class="article-info info-on-right">
-          
-          
+<p><strong>神经辐射场（Neural Radiance Fields, NeRF）</strong>解决的任务是<strong>新视角合成（novel view synthesis）</strong>，也就是通过一组相同事物不同角度的照片，合成出其他角度下的照片，这其实可以理解为对图片的某种插值。</p>
+<h1 id="体渲染"><a href="#体渲染" class="headerlink" title="体渲染"></a>体渲染</h1><h2 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h2><p><strong>体渲染（Volume Rendering）</strong>最初的目的是为了解决一些类似云雾一样的半透明、非刚性物体的渲染。它的一个好处是天然可微，给反向传播带来了机会。</p>
+<p>假设整个场景由若干粒子组成，也就是密度$\sigma$，颜色$c$各不相同的粒子。我们认为，光线碰到这些粒子后，会发生吸收，从而导致其光照强度遭到衰减，衰减的部分用于让粒子“发光”。同时反射分为漫反射和镜面反射，前者是各向同性，后者是各向异性。所以颜色$c$作为建模反射的手段，也需要根据观测角度的不同而变化，即view-dependent color。</p>
+<p>所以整个过程即为，一束强度为$I_0$的光线从$\boldsymbol d$处发射，在$s$处，光线通过粒子密度为$\sigma(s)$的地方后被吸收一部分，吸收的那一部分“点亮”（反射）了粒子本身，产生了颜色$c(s, \boldsymbol d)$。粒子密度$\sigma(⋅)$和颜色$c(⋅)$是后面NeRF将会学习出来的值，我们可以在下面的推导中认为其已知。根据朗伯-比尔定律（Beer-Lambert Law），$s$处光强为<br>$$<br>I(s) &#x3D; I_0 e^{\int_{0}^{s}-\sigma(t)dt}<br>$$<br>其中$e^{\int_{0}^{s}-\sigma(t)dt}$可以视为一个值介于0~1的衰减的系数，记为“透明度”：<br>$$<br>T(s) &#x3D; e^{\int_{0}^{s}-\sigma(t)dt}<br>$$<br> 所以“不透明度”可以记作$1−T(s)$，它指的是从$0$到$s$被吸收的（用于反射产生颜色部分的）系数，也就是一个分布函数。对其求导可以得到密度函数$T(s) \sigma(s)$，于是最后的颜色可以表示为积分$\int_{0}^{\infin}T(s)σ(s)c(s)ds$。由于在实际中不可能真的从$0$到无穷远积分，所以会设定一个下限$t_n$和上限$t_f$，取near和far之意。</p>
+<p>于是，给定一个光线$r(t)&#x3D;\boldsymbol o+ t \boldsymbol d$，这条光线最后取得的颜色$C(r)$可以写作：<br>$$<br>C(\boldsymbol r) &#x3D; \int_{t_n}^{t_f}T(t) \sigma(\boldsymbol r(t)) c(\boldsymbol r(t), \boldsymbol d)dt \<br>T(t) &#x3D; \exp(-\int_{t_n}^{t} \sigma(\boldsymbol r(s))ds)<br>$$<br>现在，我们已经知道了一根光线通过一个三维粒子场后，所产生的颜色。由于我们不可能得到上述过程的解析解，我们需要考虑它的离散化形式。</p>
+<h2 id="离散化"><a href="#离散化" class="headerlink" title="离散化"></a>离散化</h2><p>我们将积分区间分成$N$等份：$[t_n + \frac{i−1}{N}(t_f−t_n), t_n+ \frac{i}{N}(t_f−t_n)]$，然后进行朴素的离散化：<br>$$<br>C(\boldsymbol r) &#x3D; \sum_{i &#x3D; 1}^{N} C_i(\boldsymbol r)<br>$$<br>对于每个$C_i(\boldsymbol r)$，$\sigma (·)$和$c(·)$可近似为常数。而$T(·)$由于存在变上限积分，其导数与$\sigma(·)$有关，不能简单地进行一阶近似。考虑$t$是小区间$[t_i, t_{i+1}]$中的一个值，有<br>$$<br>T(t)<br>&amp;&#x3D;&amp;<br>\exp(- \int_{t_n}^{t} \sigma(\boldsymbol r(s))ds) \<br>&amp;&#x3D;&amp;<br>\exp(- \int_{t_n}^{t_i} \sigma(\boldsymbol r(s))ds) \exp(- \int_{t_i}^{t} \sigma(\boldsymbol r(s))ds) \<br>&amp;&#x3D;&amp;<br>T(t_i) \exp(- \int_{t_i}^{t} \sigma(\boldsymbol r(s))ds) \<br>&amp;&#x3D;&amp;<br>T(t_i) \exp(-\sigma_i (t - t_i))<br>$$<br>记$T_i &#x3D; T(t_i) &#x3D; \exp(-\sum_{j&#x3D;1}^{i-1} \sigma_j(t_{j+1} - t_j))$，有<br>$$<br>C_i(\boldsymbol r)<br>&amp;&#x3D;&amp;<br>\int_{t_i}^{t_{i+1}} T(t) \sigma(\boldsymbol r(t)) c(\boldsymbol r(t), \boldsymbol d)dt \<br>&amp;&#x3D;&amp; \sigma_i c_i T_i \int_{t_i}^{t_{i+1}} \exp(-\sigma_i (t-t_i))dt \<br>&amp;&#x3D;&amp; c_i T_i (1 - e^{-\sigma_i(t_{i+1} - t_i)})<br>$$<br>记$\delta_i &#x3D; t_{i+1} - t_i$，则$C(\boldsymbol r)$的离散形式为<br>$$<br>C(\boldsymbol r) &#x3D; \sum_{i&#x3D;1}^{N}c_iT_i(1-e^{-\sigma_i \delta_i}) \<br>T_i &#x3D; \exp(-\sum_{j&#x3D;1}^{i-1}\sigma_i \delta_i)<br>$$<br>令<br>$$<br>\alpha_i &#x3D; 1 - \exp(-\sigma_i \delta_i)<br>$$<br>则有<br>$$<br>C(\boldsymbol r) &#x3D; \sum_{i&#x3D;1}^{N}\alpha_i c_i \prod_{j&#x3D;1}^{i-1}(1-\alpha_j)<br>$$<br>$\alpha$正是我们对（离散化情况下）透明度的直观认识。它考虑的是离散时，第$i$层与第$i+1$层之间混合时的权重。而$T(s)$说的是光线从$0$传播到$s$，还剩下多少。所以考虑已经被吸收后的光线$I_0 T(s)$，再从$s$传播到$s+\delta$，由于负指数性质，会衰减为原先的$\exp(−\sigma\delta)$倍。这正是为什么会有<br>$$<br>T_i &#x3D; \prod_{j&#x3D;1}^{i-1}(1-\alpha_i)<br>$$</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>todo</p>
 
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/posts/nerf" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/d2l/" class="archive-article-date">
-  	<time datetime="2024-01-14T10:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/posts/slambook" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          十四讲学习笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/d2l/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">《动手学深度学习》笔记</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/d2l/">《动手学深度学习》笔记</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/nice-slam/" class="archive-article-date">
-  	<time datetime="2024-01-14T10:33:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/nice-slam/">论文阅读《NICE-SLAM: Neural Implicit Scalable Encoding for SLAM》</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/imap/" class="archive-article-date">
-  	<time datetime="2024-01-14T10:32:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/imap/">论文阅读《iMAP: Implicit Mapping and Positioning in Real-Time》</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -305,8 +305,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2024/1 | Hexo</title>
+  <title>十四讲学习笔记 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2024/01/index.html">
+  <meta name="description" content="萌新的十四讲学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十四讲学习笔记">
+<meta property="og:url" content="http://example.com/posts/slambook">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="萌新的十四讲学习笔记">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-01-21T13:14:18.000Z">
+<meta property="article:modified_time" content="2024-01-21T13:15:43.376Z">
 <meta property="article:author" content="liuquehuan">
 <meta name="twitter:card" content="summary">
   
@@ -132,157 +136,173 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-十四讲学习笔记" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      十四讲学习笔记
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/slambook" class="archive-article-date">
+
+        
+        <a href="/posts/slambook" class="archive-article-date">
   	<time datetime="2024-01-21T13:14:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-21</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/slambook">十四讲学习笔记</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>萌新的十四讲学习笔记</p>
+<span id="more"></span>
 
-        <div class="article-info info-on-right">
-          
-          
+<h1 id="2-初始SLAM"><a href="#2-初始SLAM" class="headerlink" title="2.初始SLAM"></a>2.初始SLAM</h1><p><strong>单目（Monocular）相机</strong>：无法通过单张图片计算场景中物体与相机之间的距离，必须平移之后才能计算深度，且存在尺度不确定性。</p>
+<p><strong>深度（RGB-D）相机</strong>：除了能够采集到彩色图片，还能读出每个像素与相机之间的距离。</p>
+<p><strong>前端视觉里程计（Visual Odometry，VO）</strong>：估算相邻图像间相机的运动，并恢复场景的空间结构（局部地图）。它和实际的里程计一样，只计算相邻时刻的运动，和过去的信息没有关联。</p>
+<p><strong>后端（非线性）优化（Optimization）</strong>：接受不同时刻视觉里程计测量的相机位姿，以及回环检测的信息，对它们进行优化以消除累积误差，得到全局一致的轨迹和地图。</p>
+<h1 id="3-三维空间刚体运动"><a href="#3-三维空间刚体运动" class="headerlink" title="3.三维空间刚体运动"></a>3.三维空间刚体运动</h1><h2 id="外积"><a href="#外积" class="headerlink" title="外积"></a>外积</h2><p>$$<br>\boldsymbol a \times \boldsymbol b &#x3D;<br>\begin{vmatrix}<br>\boldsymbol e_1 &amp;\boldsymbol e_2 &amp;\boldsymbol e_3 \<br>a_1 &amp;a_2 &amp;a_3  \<br>b_1 &amp;b_2 &amp;b_3 \<br>\end{vmatrix} &#x3D;<br>\left [ \begin{matrix}<br>a_2b_3 - a_3b_2 \<br>a_3b_1 - a_1b_3 \<br>a_1b_2 - a_2b_1<br>\end{matrix} \right ] &#x3D;<br>\left [ \begin{matrix}<br>0 &amp;-a_3 &amp;a_2 \<br>a_3 &amp;0 &amp;-a_1 \<br>-a_2 &amp;a_1 &amp;0<br>\end{matrix} \right ] \boldsymbol b \overset{def}{&#x3D;}<br>\boldsymbol a \verb|^| \boldsymbol b<br>$$</p>
+<p>其中$\boldsymbol a\verb|^|$表示$\boldsymbol a$对应的反对称矩阵：<br>$$<br>\boldsymbol a \verb|^| &#x3D;<br>\left [ \begin{matrix}<br>0 &amp;-a_3 &amp;a_2 \<br>a_3 &amp;0 &amp;-a_1 \<br>-a_2 &amp;a_1 &amp;0<br>\end{matrix} \right ]<br>$$</p>
+<h2 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h2><p>设向量$\boldsymbol a$在两个坐标系下的坐标为$\boldsymbol a_1, \boldsymbol a_2$，有<br>$$<br>\boldsymbol a_1 &#x3D; \boldsymbol R_{12} \boldsymbol a_2 + \boldsymbol t_{12}<br>$$<br>其中$\boldsymbol R_{12}$是指“把坐标系2的向量变换到坐标系1中”。旋转矩阵是行列式为1的正交矩阵，反之也成立，n维旋转矩阵的几何称为<strong>特殊正交群</strong>，记为SO(n)。$\boldsymbol t_{12}$是坐标系1的原点指向坐标系2原点的向量，在坐标系1下取的坐标。</p>
+<p>在三维向量的末尾添加1，称为<strong>齐次坐标</strong>，从而一次旋转加一次平移可以简单地表示为<br>$$<br>\left [ \begin{matrix}<br>\boldsymbol a’ \<br>1 \<br>\end{matrix} \right ] &#x3D;<br>\left [ \begin{matrix}<br>\boldsymbol R &amp;\boldsymbol t \<br>\boldsymbol 0^T &amp;1 \<br>\end{matrix} \right ]<br>\left [ \begin{matrix}<br>\boldsymbol a \<br>1 \<br>\end{matrix} \right ] \overset{def}{&#x3D;}<br>\boldsymbol T<br>\left [ \begin{matrix}<br>\boldsymbol a \<br>1 \<br>\end{matrix} \right ]<br>$$<br>$\boldsymbol T$称为<strong>变换矩阵（Transform Matrix）</strong>。它的左上角为旋转矩阵，右侧为平移向量，左下角为$\boldsymbol 0$向量，右下角为1。这种矩阵称为<strong>特殊欧氏群</strong>，记作SE(n)。</p>
+<h2 id="旋转向量"><a href="#旋转向量" class="headerlink" title="旋转向量"></a>旋转向量</h2><p>矩阵表示方式的缺点：旋转矩阵以9个量表示3个自由度的旋转，变换矩阵以16个量表示6个自由度的变换，是冗余的；此外旋转矩阵自身带有约束（必须是行列式为1的正交矩阵），这些约束会使估计或优化变得困难。</p>
+<p>我们可以用一个向量来表示旋转，其方向为旋转轴方向，大小为旋转角。这种表示本质上是用四个数描述了一个旋转，它到旋转矩阵的转换由<strong>罗德里格斯公式</strong>给出：<br>$$<br>\boldsymbol R &#x3D; \cos \theta \boldsymbol I + (1 - \cos \theta) \boldsymbol n \boldsymbol n^T + \sin \theta \boldsymbol n \verb|^|<br>$$<br>反之有<br>$$<br>\theta &#x3D; \arccos \frac{tr(\boldsymbol R) - 1}{2}<br>$$<br>而转轴$\boldsymbol n$是$\boldsymbol R$特征值1对应的特征向量。</p>
+<h2 id="欧拉角"><a href="#欧拉角" class="headerlink" title="欧拉角"></a>欧拉角</h2><p>欧拉定理：空间中任何一个旋转所对应的旋转矩阵$\boldsymbol R$，可以拆分成三个不是连续绕相同轴进行的旋转所对应旋转矩阵$\boldsymbol A，\boldsymbol B，\boldsymbol C$的乘积。这三个旋转矩阵所对应的旋转角$\alpha, \beta, \gamma$称为欧拉角。</p>
+<p>在一些情况下， 一个旋转可能对应多个欧拉角的组合，称为奇异点。由于这个问题，欧拉角不适合用于插值或迭代，往往只用于人机交互中。可以证明，用三个实数来表达三维旋转总会碰到奇异性问题。</p>
+<h2 id="四元数"><a href="#四元数" class="headerlink" title="四元数"></a>四元数</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>一个四元数$\boldsymbol q$有一个实部和三个虚部：<br>$$<br>\boldsymbol q &#x3D; q_0 + q_1 i + q_2 j + q_3 k<br>$$<br>这三个虚部满足以下关系：<br>$$<br>\begin{cases}<br>    i^2 &#x3D; j^2 &#x3D; k^2 &#x3D; -1 \<br>    ij &#x3D; k, ji &#x3D; -k \<br>    jk &#x3D; i, kj &#x3D; -i \<br>    ki &#x3D; j, ik &#x3D; -j<br>\end{cases}<br>$$<br>有时也用一个标量和一个向量表达四元数：<br>$$<br>\boldsymbol q &#x3D; [s, \boldsymbol v]^T, s &#x3D; q_0 \in \mathbb{R},<br>\boldsymbol v &#x3D; [q_1, q_2, q_3]^T \in \mathbb{R}^3<br>$$</p>
+<h3 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h3><p>加减：<br>$$<br>\boldsymbol q_a \pm \boldsymbol q_b &#x3D; [s_a \pm s_b, \boldsymbol v_a \pm \boldsymbol v_b]^T<br>$$<br>乘法：<br>$$<br>\boldsymbol q_a * \boldsymbol q_b &#x3D; [s_a s_b - \boldsymbol v_a^T \boldsymbol v_b, s_a \boldsymbol v_b + s_b \boldsymbol v_a + \boldsymbol v_a \times \boldsymbol v_b]^T<br>$$<br>由于外积的存在，四元数乘法通常是不可交换的。</p>
+<p>模长：<br>$$<br>\Vert \boldsymbol q_a \Vert &#x3D; \sqrt{s_a^2 + x_a^2 + y_a^2 + z_a^2}<br>$$<br>两个四元数乘积的模即模的乘积，从而单位四元数相乘仍是单位四元数。</p>
+<p>共轭：<br>$$<br>\boldsymbol q_a^* &#x3D; [s_a, -\boldsymbol v_a]^T<br>$$<br>四元数共轭与其本身相乘，得到一个实四元数，其实部为模长平方。</p>
+<p>逆：<br>$$<br>\boldsymbol q^{-1} &#x3D; \frac{\boldsymbol q^*}{\Vert \boldsymbol q \Vert ^2}<br>$$<br>四元数与自己的逆的乘积为实四元数1。乘积的逆有与矩阵相似的性质：<br>$$<br>(\boldsymbol q_a \boldsymbol q_b)^{-1} &#x3D; \boldsymbol q_b ^{-1} \boldsymbol q_a^{-1}<br>$$<br>数乘：<br>$$<br>k \boldsymbol q &#x3D; [ks, k \boldsymbol b]^T<br>$$</p>
+<h3 id="四元数表示旋转"><a href="#四元数表示旋转" class="headerlink" title="四元数表示旋转"></a>四元数表示旋转</h3><p>设$\boldsymbol p &#x3D; [x, y, z] \in \mathbb{R}^3$为空间三维点，$\boldsymbol q$为单位四元数，则$\boldsymbol p$经过$\boldsymbol q$旋转后有<br>$$<br>\boldsymbol p’ &#x3D; \boldsymbol q \boldsymbol p \boldsymbol q^{-1}<br>$$<br>其中$\boldsymbol p &#x3D; [0, x, y, z]^T$。</p>
+<p>四元数到旋转矩阵的转换：<br>$$<br>\boldsymbol R &#x3D; \boldsymbol v \boldsymbol v^T + s^2 \boldsymbol I + 2 s^2 \boldsymbol v \verb|^| + (\boldsymbol v \verb|^|)^2<br>$$<br>四元数到旋转向量的转换：<br>$$<br>\begin{cases}<br>    \theta &#x3D; 2 \arccos q_0 \<br>    [n_x, n_y, n_z]^T &#x3D; [q_1, q_2, q_3]^T &#x2F; \sin \frac{\theta}{2}<br>\end{cases}<br>$$</p>
+<h1 id="4-李群与李代数"><a href="#4-李群与李代数" class="headerlink" title="4.李群与李代数"></a>4.李群与李代数</h1><h2 id="李代数"><a href="#李代数" class="headerlink" title="李代数"></a>李代数</h2><p><strong>群（group）</strong>是一种集合加上一种运算的代数结构。把集合记作A，运算记作·，则群可以记作$G &#x3D; (A,·)$，其满足以下条件：封闭性、结合律、存在幺元、任意元素存在逆。<strong>李群</strong>是指具有连续（光滑）性质的群。</p>
+<p>设$\boldsymbol R(t)$为相机的旋转随时间的函数，有<br>$$<br>\boldsymbol R(t) \boldsymbol R(t)^T &#x3D; \boldsymbol I<br>$$<br>两边对时间求导，得<br>$$<br>\dot{\boldsymbol R}(t) \boldsymbol R(t)^T + \boldsymbol R(t) \dot{\boldsymbol R}(t)^T &#x3D; \boldsymbol 0<br>$$<br>从而$\dot{\boldsymbol R}(t) \boldsymbol R(t)^T$是反对称矩阵。令$\dot{\boldsymbol R}(t) \boldsymbol R(t)^T &#x3D; \phi(t) \verb|^|$。</p>
+<p>两边右乘$\boldsymbol R(t)$，有<br>$$<br>\dot{\boldsymbol R}(t) &#x3D; \phi(t)\verb|^| \boldsymbol R(t)<br>$$<br>可以看到，每对旋转矩阵求一次导数，只需左乘一个$\phi(t)\verb|^|$。把$\boldsymbol R(t)$在$t_0 &#x3D; 0$附近进行一阶泰勒展开，考虑到$\boldsymbol R(0) &#x3D; \boldsymbol I$，有<br>$$<br>\boldsymbol R(t) &amp;\approx&amp; \boldsymbol R(t_0) + \dot{\boldsymbol R}(t_0)(t-t_0) \<br>&amp;&#x3D;&amp; \boldsymbol I + \phi(t_0)\verb|^|(t)<br>$$<br>设在$t_0$附近$\phi$为常数$\phi_0$，由式(22)有<br>$$<br>\dot{\boldsymbol R}(t) &#x3D; \phi_0\verb|^| \boldsymbol R(t)<br>$$<br>在$t&#x3D;0$附近成立。</p>
+<p>解上述微分方程得<br>$$<br>\boldsymbol R(t) &#x3D; \exp(\phi_0\verb|^| t)<br>$$<br>在$t&#x3D;0$附近成立。</p>
+<p>由上式可以看出，一个旋转矩阵$\boldsymbol R$与另一个反对称矩阵$\phi_0\verb|^| t$通过指数关系发生了关联。事实上这个反对称矩阵（或其对应的三维向量，在不引起歧义的情况下不加区别）就是$SO(3)$对应的李代数，记为$\mathfrak{so}(3)$。换言之，$\mathfrak{so}(3)$是一个由三维向量组成的集合，每个向量对应一个反对称矩阵，它与$SO(3)$的关系由指数映射给定<br>$$<br>\boldsymbol R &#x3D; \exp(\phi \verb|^|)<br>$$<br>$SE(3)$同样也有自己对应的李代数，记为$\mathfrak{se}(3)$，其元素记作$\xi&#x3D;[\rho,\phi]$为六维向量，前三维$\rho$是平移（但不直接是平移），后三维$\phi$是旋转，实质上是一个$\mathfrak{so}(3)$元素。</p>
+<h2 id="指数映射"><a href="#指数映射" class="headerlink" title="指数映射"></a>指数映射</h2><p>对于$\mathfrak{so}(3)$中的元素$\phi &#x3D; \theta \alpha$，其中$\alpha$为单位向量，其指数映射为<br>$$<br>\exp(\theta \alpha \verb|^|) &#x3D; \cos \theta \boldsymbol I + (1 - \cos \theta) \boldsymbol \alpha \boldsymbol \alpha^T + \sin \theta \boldsymbol \alpha \verb|^|<br>$$<br>这与罗德里格斯公式相同，说明$\mathfrak{so}(3)$实质上是由旋转向量组成的空间，而指数映射即罗德里格斯公式。</p>
+<p>$\mathfrak{se}(3)$上的指数映射如下：<br>$$<br>\exp(\xi \verb|^|) &#x3D;<br>\left [ \begin{matrix}<br>\boldsymbol R &amp;\boldsymbol J \boldsymbol \rho \<br>\boldsymbol 0^T &amp; 1<br>\end{matrix} \right ] &#x3D;<br>\boldsymbol T<br>$$<br>其中<br>$$<br>J &#x3D; \frac{\sin \theta}{\theta} \boldsymbol I + (1 - \frac{\sin \theta}{\theta}) \boldsymbol \alpha \boldsymbol \alpha^T + \frac{1 - \cos \theta}{\theta} \boldsymbol \alpha \verb|^|<br>$$<br>可以看出，$\xi$的指数映射的左上角$R$与旋转部分$\phi$对应，右上角的的平移部分则发生了一次以$J$为系数的线性变换。</p>
+<h2 id="李代数求导与扰动模型"><a href="#李代数求导与扰动模型" class="headerlink" title="李代数求导与扰动模型"></a>李代数求导与扰动模型</h2><h1 id="设我们对空间点-boldsymbol-p-进行旋转得到-boldsymbol-R-boldsymbol-p-。一种求导的方式是对-boldsymbol-R-进行一次扰动-Delta-boldsymbol-R-，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为-varphi-，有-frac-partial-boldsymbol-R-boldsymbol-p-partial-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-exp-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-I-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-varphi-verb-boldsymbol-R-boldsymbol-p-boldsymbol-varphi"><a href="#设我们对空间点-boldsymbol-p-进行旋转得到-boldsymbol-R-boldsymbol-p-。一种求导的方式是对-boldsymbol-R-进行一次扰动-Delta-boldsymbol-R-，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为-varphi-，有-frac-partial-boldsymbol-R-boldsymbol-p-partial-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-exp-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-I-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-varphi-verb-boldsymbol-R-boldsymbol-p-boldsymbol-varphi" class="headerlink" title="设我们对空间点$\boldsymbol p$进行旋转得到$\boldsymbol R \boldsymbol p$。一种求导的方式是对$\boldsymbol R$进行一次扰动$\Delta \boldsymbol R$，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为$\varphi$，有$$\frac{\partial (\boldsymbol R \boldsymbol p)}{\partial \boldsymbol \varphi}&amp;&#x3D;&amp;\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac{\exp(\boldsymbol \varphi \verb|^| ) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}{\boldsymbol \varphi} \&amp;&#x3D;&amp;\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac{(\boldsymbol I + \boldsymbol \varphi \verb|^|) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}{\boldsymbol \varphi} \&amp;&#x3D;&amp;\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac{\boldsymbol \varphi \verb|^| \boldsymbol R \boldsymbol p}{\boldsymbol \varphi}"></a>设我们对空间点$\boldsymbol p$进行旋转得到$\boldsymbol R \boldsymbol p$。一种求导的方式是对$\boldsymbol R$进行一次扰动$\Delta \boldsymbol R$，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为$\varphi$，有<br>$$<br>\frac{\partial (\boldsymbol R \boldsymbol p)}{\partial \boldsymbol \varphi}<br>&amp;&#x3D;&amp;<br>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{\exp(\boldsymbol \varphi \verb|^| ) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}<br>{\boldsymbol \varphi} \<br>&amp;&#x3D;&amp;<br>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{(\boldsymbol I + \boldsymbol \varphi \verb|^|) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}<br>{\boldsymbol \varphi} \<br>&amp;&#x3D;&amp;<br>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{\boldsymbol \varphi \verb|^| \boldsymbol R \boldsymbol p}<br>{\boldsymbol \varphi}</h1><p>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{-(\boldsymbol R \boldsymbol p) \verb|^| \boldsymbol \varphi}<br>{\boldsymbol \varphi}<br>&#x3D; -(\boldsymbol R \boldsymbol p) \verb|^|<br>$$<br>$SE(3)$上的扰动模型为<br>$$<br>\frac{\partial (\boldsymbol T \boldsymbol p)}{\partial \delta \boldsymbol \xi}<br>&#x3D; \left [ \begin{matrix}<br>\boldsymbol I &amp;-(\boldsymbol R \boldsymbol p + \boldsymbol t) \verb|^| \<br>\boldsymbol 0^T &amp;\boldsymbol 0^T<br>\end{matrix} \right ]<br>$$</p>
+<h1 id="5-相机与图像"><a href="#5-相机与图像" class="headerlink" title="5.相机与图像"></a>5.相机与图像</h1><p>单目相机成像过程：</p>
+<ol>
+<li>世界坐标系下有一个固定的点$P$，世界坐标为$\boldsymbol P_w$。</li>
+<li>相机的变换矩阵为$\boldsymbol T$，从而$P$的相机坐标为$\tilde{\boldsymbol P_c} &#x3D; \boldsymbol T \boldsymbol P_w &#x3D; [X, Y, Z]^T$。</li>
+<li>把相机坐标投影到归一化平面$Z&#x3D;1$上，得到归一化坐标$\boldsymbol P_c &#x3D; [X&#x2F;Z, Y&#x2F;Z, 1]^T$。</li>
+<li>有畸变时，根据畸变参数计算$\boldsymbol P_c$发生畸变后的坐标。</li>
+<li>左乘内参得到像素坐标$\boldsymbol P_{uv} &#x3D; \boldsymbol K \boldsymbol P_c$。</li>
+</ol>
+<h1 id="6-非线性优化"><a href="#6-非线性优化" class="headerlink" title="6.非线性优化"></a>6.非线性优化</h1><h2 id="图优化"><a href="#图优化" class="headerlink" title="图优化"></a>图优化</h2><p>图优化把优化问题表现为图的形式，图中的顶点表示优化变量，边表示误差项。这里的图也可以称为贝叶斯图或因子图。</p>
 
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/posts/slambook" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/nerf" class="archive-article-date">
-  	<time datetime="2024-01-21T13:14:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-21</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/posts/nerf" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">NeRF学习笔记</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/nerf">NeRF学习笔记</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/d2l/" class="archive-article-date">
-  	<time datetime="2024-01-14T10:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/d2l/">《动手学深度学习》笔记</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/nice-slam/" class="archive-article-date">
-  	<time datetime="2024-01-14T10:33:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/nice-slam/">论文阅读《NICE-SLAM: Neural Implicit Scalable Encoding for SLAM》</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/posts/imap/" class="archive-article-date">
-  	<time datetime="2024-01-14T10:32:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/posts/imap/">论文阅读《iMAP: Implicit Mapping and Positioning in Real-Time》</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -305,8 +325,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
