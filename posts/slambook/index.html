@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>NeRF学习笔记 | Hexo</title>
+  <title>十四讲学习笔记 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="萌新的NeRF学习笔记">
+  <meta name="description" content="萌新的十四讲学习笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NeRF学习笔记">
-<meta property="og:url" content="http://example.com/posts/nerf">
+<meta property="og:title" content="十四讲学习笔记">
+<meta property="og:url" content="http://example.com/posts/slambook/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="萌新的NeRF学习笔记">
+<meta property="og:description" content="萌新的十四讲学习笔记">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-01-21T13:14:05.000Z">
-<meta property="article:modified_time" content="2024-01-21T13:16:01.558Z">
+<meta property="article:published_time" content="2024-01-21T13:14:18.000Z">
+<meta property="article:modified_time" content="2024-01-21T13:58:23.264Z">
 <meta property="article:author" content="liuquehuan">
 <meta name="twitter:card" content="summary">
   
@@ -136,36 +136,65 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-NeRF学习笔记" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-十四讲学习笔记" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      NeRF学习笔记
+      十四讲学习笔记
     </h1>
   
 
         
-        <a href="/posts/nerf" class="archive-article-date">
-  	<time datetime="2024-01-21T13:14:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-21</time>
+        <a href="/posts/slambook/" class="archive-article-date">
+  	<time datetime="2024-01-21T13:14:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-21</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>萌新的NeRF学习笔记</p>
+        <p>萌新的十四讲学习笔记</p>
 <span id="more"></span>
 
-<p><strong>神经辐射场（Neural Radiance Fields, NeRF）</strong>解决的任务是<strong>新视角合成（novel view synthesis）</strong>，也就是通过一组相同事物不同角度的照片，合成出其他角度下的照片，这其实可以理解为对图片的某种插值。</p>
-<h1 id="体渲染"><a href="#体渲染" class="headerlink" title="体渲染"></a>体渲染</h1><h2 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h2><p><strong>体渲染（Volume Rendering）</strong>最初的目的是为了解决一些类似云雾一样的半透明、非刚性物体的渲染。它的一个好处是天然可微，给反向传播带来了机会。</p>
-<p>假设整个场景由若干粒子组成，也就是密度$\sigma$，颜色$c$各不相同的粒子。我们认为，光线碰到这些粒子后，会发生吸收，从而导致其光照强度遭到衰减，衰减的部分用于让粒子“发光”。同时反射分为漫反射和镜面反射，前者是各向同性，后者是各向异性。所以颜色$c$作为建模反射的手段，也需要根据观测角度的不同而变化，即view-dependent color。</p>
-<p>所以整个过程即为，一束强度为$I_0$的光线从$\boldsymbol d$处发射，在$s$处，光线通过粒子密度为$\sigma(s)$的地方后被吸收一部分，吸收的那一部分“点亮”（反射）了粒子本身，产生了颜色$c(s, \boldsymbol d)$。粒子密度$\sigma(⋅)$和颜色$c(⋅)$是后面NeRF将会学习出来的值，我们可以在下面的推导中认为其已知。根据朗伯-比尔定律（Beer-Lambert Law），$s$处光强为<br>$$<br>I(s) &#x3D; I_0 e^{\int_{0}^{s}-\sigma(t)dt}<br>$$<br>其中$e^{\int_{0}^{s}-\sigma(t)dt}$可以视为一个值介于0~1的衰减的系数，记为“透明度”：<br>$$<br>T(s) &#x3D; e^{\int_{0}^{s}-\sigma(t)dt}<br>$$<br> 所以“不透明度”可以记作$1−T(s)$，它指的是从$0$到$s$被吸收的（用于反射产生颜色部分的）系数，也就是一个分布函数。对其求导可以得到密度函数$T(s) \sigma(s)$，于是最后的颜色可以表示为积分$\int_{0}^{\infin}T(s)σ(s)c(s)ds$。由于在实际中不可能真的从$0$到无穷远积分，所以会设定一个下限$t_n$和上限$t_f$，取near和far之意。</p>
-<p>于是，给定一个光线$r(t)&#x3D;\boldsymbol o+ t \boldsymbol d$，这条光线最后取得的颜色$C(r)$可以写作：<br>$$<br>C(\boldsymbol r) &#x3D; \int_{t_n}^{t_f}T(t) \sigma(\boldsymbol r(t)) c(\boldsymbol r(t), \boldsymbol d)dt \<br>T(t) &#x3D; \exp(-\int_{t_n}^{t} \sigma(\boldsymbol r(s))ds)<br>$$<br>现在，我们已经知道了一根光线通过一个三维粒子场后，所产生的颜色。由于我们不可能得到上述过程的解析解，我们需要考虑它的离散化形式。</p>
-<h2 id="离散化"><a href="#离散化" class="headerlink" title="离散化"></a>离散化</h2><p>我们将积分区间分成$N$等份：$[t_n + \frac{i−1}{N}(t_f−t_n), t_n+ \frac{i}{N}(t_f−t_n)]$，然后进行朴素的离散化：<br>$$<br>C(\boldsymbol r) &#x3D; \sum_{i &#x3D; 1}^{N} C_i(\boldsymbol r)<br>$$<br>对于每个$C_i(\boldsymbol r)$，$\sigma (·)$和$c(·)$可近似为常数。而$T(·)$由于存在变上限积分，其导数与$\sigma(·)$有关，不能简单地进行一阶近似。考虑$t$是小区间$[t_i, t_{i+1}]$中的一个值，有<br>$$<br>T(t)<br>&amp;&#x3D;&amp;<br>\exp(- \int_{t_n}^{t} \sigma(\boldsymbol r(s))ds) \<br>&amp;&#x3D;&amp;<br>\exp(- \int_{t_n}^{t_i} \sigma(\boldsymbol r(s))ds) \exp(- \int_{t_i}^{t} \sigma(\boldsymbol r(s))ds) \<br>&amp;&#x3D;&amp;<br>T(t_i) \exp(- \int_{t_i}^{t} \sigma(\boldsymbol r(s))ds) \<br>&amp;&#x3D;&amp;<br>T(t_i) \exp(-\sigma_i (t - t_i))<br>$$<br>记$T_i &#x3D; T(t_i) &#x3D; \exp(-\sum_{j&#x3D;1}^{i-1} \sigma_j(t_{j+1} - t_j))$，有<br>$$<br>C_i(\boldsymbol r)<br>&amp;&#x3D;&amp;<br>\int_{t_i}^{t_{i+1}} T(t) \sigma(\boldsymbol r(t)) c(\boldsymbol r(t), \boldsymbol d)dt \<br>&amp;&#x3D;&amp; \sigma_i c_i T_i \int_{t_i}^{t_{i+1}} \exp(-\sigma_i (t-t_i))dt \<br>&amp;&#x3D;&amp; c_i T_i (1 - e^{-\sigma_i(t_{i+1} - t_i)})<br>$$<br>记$\delta_i &#x3D; t_{i+1} - t_i$，则$C(\boldsymbol r)$的离散形式为<br>$$<br>C(\boldsymbol r) &#x3D; \sum_{i&#x3D;1}^{N}c_iT_i(1-e^{-\sigma_i \delta_i}) \<br>T_i &#x3D; \exp(-\sum_{j&#x3D;1}^{i-1}\sigma_i \delta_i)<br>$$<br>令<br>$$<br>\alpha_i &#x3D; 1 - \exp(-\sigma_i \delta_i)<br>$$<br>则有<br>$$<br>C(\boldsymbol r) &#x3D; \sum_{i&#x3D;1}^{N}\alpha_i c_i \prod_{j&#x3D;1}^{i-1}(1-\alpha_j)<br>$$<br>$\alpha$正是我们对（离散化情况下）透明度的直观认识。它考虑的是离散时，第$i$层与第$i+1$层之间混合时的权重。而$T(s)$说的是光线从$0$传播到$s$，还剩下多少。所以考虑已经被吸收后的光线$I_0 T(s)$，再从$s$传播到$s+\delta$，由于负指数性质，会衰减为原先的$\exp(−\sigma\delta)$倍。这正是为什么会有<br>$$<br>T_i &#x3D; \prod_{j&#x3D;1}^{i-1}(1-\alpha_i)<br>$$</p>
-<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>todo</p>
+<h1 id="2-初始SLAM"><a href="#2-初始SLAM" class="headerlink" title="2.初始SLAM"></a>2.初始SLAM</h1><p><strong>单目（Monocular）相机</strong>：无法通过单张图片计算场景中物体与相机之间的距离，必须平移之后才能计算深度，且存在尺度不确定性。</p>
+<p><strong>深度（RGB-D）相机</strong>：除了能够采集到彩色图片，还能读出每个像素与相机之间的距离。</p>
+<p><strong>前端视觉里程计（Visual Odometry，VO）</strong>：估算相邻图像间相机的运动，并恢复场景的空间结构（局部地图）。它和实际的里程计一样，只计算相邻时刻的运动，和过去的信息没有关联。</p>
+<p><strong>后端（非线性）优化（Optimization）</strong>：接受不同时刻视觉里程计测量的相机位姿，以及回环检测的信息，对它们进行优化以消除累积误差，得到全局一致的轨迹和地图。</p>
+<h1 id="3-三维空间刚体运动"><a href="#3-三维空间刚体运动" class="headerlink" title="3.三维空间刚体运动"></a>3.三维空间刚体运动</h1><h2 id="外积"><a href="#外积" class="headerlink" title="外积"></a>外积</h2><p>$$<br>\boldsymbol a \times \boldsymbol b &#x3D;<br>\begin{vmatrix}<br>\boldsymbol e_1 &amp;\boldsymbol e_2 &amp;\boldsymbol e_3 \<br>a_1 &amp;a_2 &amp;a_3  \<br>b_1 &amp;b_2 &amp;b_3 \<br>\end{vmatrix} &#x3D;<br>\left [ \begin{matrix}<br>a_2b_3 - a_3b_2 \<br>a_3b_1 - a_1b_3 \<br>a_1b_2 - a_2b_1<br>\end{matrix} \right ] &#x3D;<br>\left [ \begin{matrix}<br>0 &amp;-a_3 &amp;a_2 \<br>a_3 &amp;0 &amp;-a_1 \<br>-a_2 &amp;a_1 &amp;0<br>\end{matrix} \right ] \boldsymbol b \overset{def}{&#x3D;}<br>\boldsymbol a \verb|^| \boldsymbol b<br>$$</p>
+<p>其中$\boldsymbol a\verb|^|$表示$\boldsymbol a$对应的反对称矩阵：<br>$$<br>\boldsymbol a \verb|^| &#x3D;<br>\left [ \begin{matrix}<br>0 &amp;-a_3 &amp;a_2 \<br>a_3 &amp;0 &amp;-a_1 \<br>-a_2 &amp;a_1 &amp;0<br>\end{matrix} \right ]<br>$$</p>
+<h2 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h2><p>设向量$\boldsymbol a$在两个坐标系下的坐标为$\boldsymbol a_1, \boldsymbol a_2$，有<br>$$<br>\boldsymbol a_1 &#x3D; \boldsymbol R_{12} \boldsymbol a_2 + \boldsymbol t_{12}<br>$$<br>其中$\boldsymbol R_{12}$是指“把坐标系2的向量变换到坐标系1中”。旋转矩阵是行列式为1的正交矩阵，反之也成立，n维旋转矩阵的几何称为<strong>特殊正交群</strong>，记为SO(n)。$\boldsymbol t_{12}$是坐标系1的原点指向坐标系2原点的向量，在坐标系1下取的坐标。</p>
+<p>在三维向量的末尾添加1，称为<strong>齐次坐标</strong>，从而一次旋转加一次平移可以简单地表示为<br>$$<br>\left [ \begin{matrix}<br>\boldsymbol a’ \<br>1 \<br>\end{matrix} \right ] &#x3D;<br>\left [ \begin{matrix}<br>\boldsymbol R &amp;\boldsymbol t \<br>\boldsymbol 0^T &amp;1 \<br>\end{matrix} \right ]<br>\left [ \begin{matrix}<br>\boldsymbol a \<br>1 \<br>\end{matrix} \right ] \overset{def}{&#x3D;}<br>\boldsymbol T<br>\left [ \begin{matrix}<br>\boldsymbol a \<br>1 \<br>\end{matrix} \right ]<br>$$<br>$\boldsymbol T$称为<strong>变换矩阵（Transform Matrix）</strong>。它的左上角为旋转矩阵，右侧为平移向量，左下角为$\boldsymbol 0$向量，右下角为1。这种矩阵称为<strong>特殊欧氏群</strong>，记作SE(n)。</p>
+<h2 id="旋转向量"><a href="#旋转向量" class="headerlink" title="旋转向量"></a>旋转向量</h2><p>矩阵表示方式的缺点：旋转矩阵以9个量表示3个自由度的旋转，变换矩阵以16个量表示6个自由度的变换，是冗余的；此外旋转矩阵自身带有约束（必须是行列式为1的正交矩阵），这些约束会使估计或优化变得困难。</p>
+<p>我们可以用一个向量来表示旋转，其方向为旋转轴方向，大小为旋转角。这种表示本质上是用四个数描述了一个旋转，它到旋转矩阵的转换由<strong>罗德里格斯公式</strong>给出：<br>$$<br>\boldsymbol R &#x3D; \cos \theta \boldsymbol I + (1 - \cos \theta) \boldsymbol n \boldsymbol n^T + \sin \theta \boldsymbol n \verb|^|<br>$$<br>反之有<br>$$<br>\theta &#x3D; \arccos \frac{tr(\boldsymbol R) - 1}{2}<br>$$<br>而转轴$\boldsymbol n$是$\boldsymbol R$特征值1对应的特征向量。</p>
+<h2 id="欧拉角"><a href="#欧拉角" class="headerlink" title="欧拉角"></a>欧拉角</h2><p>欧拉定理：空间中任何一个旋转所对应的旋转矩阵$\boldsymbol R$，可以拆分成三个不是连续绕相同轴进行的旋转所对应旋转矩阵$\boldsymbol A，\boldsymbol B，\boldsymbol C$的乘积。这三个旋转矩阵所对应的旋转角$\alpha, \beta, \gamma$称为欧拉角。</p>
+<p>在一些情况下， 一个旋转可能对应多个欧拉角的组合，称为奇异点。由于这个问题，欧拉角不适合用于插值或迭代，往往只用于人机交互中。可以证明，用三个实数来表达三维旋转总会碰到奇异性问题。</p>
+<h2 id="四元数"><a href="#四元数" class="headerlink" title="四元数"></a>四元数</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>一个四元数$\boldsymbol q$有一个实部和三个虚部：<br>$$<br>\boldsymbol q &#x3D; q_0 + q_1 i + q_2 j + q_3 k<br>$$<br>这三个虚部满足以下关系：<br>$$<br>\begin{cases}<br>    i^2 &#x3D; j^2 &#x3D; k^2 &#x3D; -1 \<br>    ij &#x3D; k, ji &#x3D; -k \<br>    jk &#x3D; i, kj &#x3D; -i \<br>    ki &#x3D; j, ik &#x3D; -j<br>\end{cases}<br>$$<br>有时也用一个标量和一个向量表达四元数：<br>$$<br>\boldsymbol q &#x3D; [s, \boldsymbol v]^T, s &#x3D; q_0 \in \mathbb{R},<br>\boldsymbol v &#x3D; [q_1, q_2, q_3]^T \in \mathbb{R}^3<br>$$</p>
+<h3 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h3><p>加减：<br>$$<br>\boldsymbol q_a \pm \boldsymbol q_b &#x3D; [s_a \pm s_b, \boldsymbol v_a \pm \boldsymbol v_b]^T<br>$$<br>乘法：<br>$$<br>\boldsymbol q_a * \boldsymbol q_b &#x3D; [s_a s_b - \boldsymbol v_a^T \boldsymbol v_b, s_a \boldsymbol v_b + s_b \boldsymbol v_a + \boldsymbol v_a \times \boldsymbol v_b]^T<br>$$<br>由于外积的存在，四元数乘法通常是不可交换的。</p>
+<p>模长：<br>$$<br>\Vert \boldsymbol q_a \Vert &#x3D; \sqrt{s_a^2 + x_a^2 + y_a^2 + z_a^2}<br>$$<br>两个四元数乘积的模即模的乘积，从而单位四元数相乘仍是单位四元数。</p>
+<p>共轭：<br>$$<br>\boldsymbol q_a^* &#x3D; [s_a, -\boldsymbol v_a]^T<br>$$<br>四元数共轭与其本身相乘，得到一个实四元数，其实部为模长平方。</p>
+<p>逆：<br>$$<br>\boldsymbol q^{-1} &#x3D; \frac{\boldsymbol q^*}{\Vert \boldsymbol q \Vert ^2}<br>$$<br>四元数与自己的逆的乘积为实四元数1。乘积的逆有与矩阵相似的性质：<br>$$<br>(\boldsymbol q_a \boldsymbol q_b)^{-1} &#x3D; \boldsymbol q_b ^{-1} \boldsymbol q_a^{-1}<br>$$<br>数乘：<br>$$<br>k \boldsymbol q &#x3D; [ks, k \boldsymbol b]^T<br>$$</p>
+<h3 id="四元数表示旋转"><a href="#四元数表示旋转" class="headerlink" title="四元数表示旋转"></a>四元数表示旋转</h3><p>设$\boldsymbol p &#x3D; [x, y, z] \in \mathbb{R}^3$为空间三维点，$\boldsymbol q$为单位四元数，则$\boldsymbol p$经过$\boldsymbol q$旋转后有<br>$$<br>\boldsymbol p’ &#x3D; \boldsymbol q \boldsymbol p \boldsymbol q^{-1}<br>$$<br>其中$\boldsymbol p &#x3D; [0, x, y, z]^T$。</p>
+<p>四元数到旋转矩阵的转换：<br>$$<br>\boldsymbol R &#x3D; \boldsymbol v \boldsymbol v^T + s^2 \boldsymbol I + 2 s^2 \boldsymbol v \verb|^| + (\boldsymbol v \verb|^|)^2<br>$$<br>四元数到旋转向量的转换：<br>$$<br>\begin{cases}<br>    \theta &#x3D; 2 \arccos q_0 \<br>    [n_x, n_y, n_z]^T &#x3D; [q_1, q_2, q_3]^T &#x2F; \sin \frac{\theta}{2}<br>\end{cases}<br>$$</p>
+<h1 id="4-李群与李代数"><a href="#4-李群与李代数" class="headerlink" title="4.李群与李代数"></a>4.李群与李代数</h1><h2 id="李代数"><a href="#李代数" class="headerlink" title="李代数"></a>李代数</h2><p><strong>群（group）</strong>是一种集合加上一种运算的代数结构。把集合记作A，运算记作·，则群可以记作$G &#x3D; (A,·)$，其满足以下条件：封闭性、结合律、存在幺元、任意元素存在逆。<strong>李群</strong>是指具有连续（光滑）性质的群。</p>
+<p>设$\boldsymbol R(t)$为相机的旋转随时间的函数，有<br>$$<br>\boldsymbol R(t) \boldsymbol R(t)^T &#x3D; \boldsymbol I<br>$$<br>两边对时间求导，得<br>$$<br>\dot{\boldsymbol R}(t) \boldsymbol R(t)^T + \boldsymbol R(t) \dot{\boldsymbol R}(t)^T &#x3D; \boldsymbol 0<br>$$<br>从而$\dot{\boldsymbol R}(t) \boldsymbol R(t)^T$是反对称矩阵。令$\dot{\boldsymbol R}(t) \boldsymbol R(t)^T &#x3D; \phi(t) \verb|^|$。</p>
+<p>两边右乘$\boldsymbol R(t)$，有<br>$$<br>\dot{\boldsymbol R}(t) &#x3D; \phi(t)\verb|^| \boldsymbol R(t)<br>$$<br>可以看到，每对旋转矩阵求一次导数，只需左乘一个$\phi(t)\verb|^|$。把$\boldsymbol R(t)$在$t_0 &#x3D; 0$附近进行一阶泰勒展开，考虑到$\boldsymbol R(0) &#x3D; \boldsymbol I$，有<br>$$<br>\boldsymbol R(t) &amp;\approx&amp; \boldsymbol R(t_0) + \dot{\boldsymbol R}(t_0)(t-t_0) \<br>&amp;&#x3D;&amp; \boldsymbol I + \phi(t_0)\verb|^|(t)<br>$$<br>设在$t_0$附近$\phi$为常数$\phi_0$，由式(22)有<br>$$<br>\dot{\boldsymbol R}(t) &#x3D; \phi_0\verb|^| \boldsymbol R(t)<br>$$<br>在$t&#x3D;0$附近成立。</p>
+<p>解上述微分方程得<br>$$<br>\boldsymbol R(t) &#x3D; \exp(\phi_0\verb|^| t)<br>$$<br>在$t&#x3D;0$附近成立。</p>
+<p>由上式可以看出，一个旋转矩阵$\boldsymbol R$与另一个反对称矩阵$\phi_0\verb|^| t$通过指数关系发生了关联。事实上这个反对称矩阵（或其对应的三维向量，在不引起歧义的情况下不加区别）就是$SO(3)$对应的李代数，记为$\mathfrak{so}(3)$。换言之，$\mathfrak{so}(3)$是一个由三维向量组成的集合，每个向量对应一个反对称矩阵，它与$SO(3)$的关系由指数映射给定<br>$$<br>\boldsymbol R &#x3D; \exp(\phi \verb|^|)<br>$$<br>$SE(3)$同样也有自己对应的李代数，记为$\mathfrak{se}(3)$，其元素记作$\xi&#x3D;[\rho,\phi]$为六维向量，前三维$\rho$是平移（但不直接是平移），后三维$\phi$是旋转，实质上是一个$\mathfrak{so}(3)$元素。</p>
+<h2 id="指数映射"><a href="#指数映射" class="headerlink" title="指数映射"></a>指数映射</h2><p>对于$\mathfrak{so}(3)$中的元素$\phi &#x3D; \theta \alpha$，其中$\alpha$为单位向量，其指数映射为<br>$$<br>\exp(\theta \alpha \verb|^|) &#x3D; \cos \theta \boldsymbol I + (1 - \cos \theta) \boldsymbol \alpha \boldsymbol \alpha^T + \sin \theta \boldsymbol \alpha \verb|^|<br>$$<br>这与罗德里格斯公式相同，说明$\mathfrak{so}(3)$实质上是由旋转向量组成的空间，而指数映射即罗德里格斯公式。</p>
+<p>$\mathfrak{se}(3)$上的指数映射如下：<br>$$<br>\exp(\xi \verb|^|) &#x3D;<br>\left [ \begin{matrix}<br>\boldsymbol R &amp;\boldsymbol J \boldsymbol \rho \<br>\boldsymbol 0^T &amp; 1<br>\end{matrix} \right ] &#x3D;<br>\boldsymbol T<br>$$<br>其中<br>$$<br>J &#x3D; \frac{\sin \theta}{\theta} \boldsymbol I + (1 - \frac{\sin \theta}{\theta}) \boldsymbol \alpha \boldsymbol \alpha^T + \frac{1 - \cos \theta}{\theta} \boldsymbol \alpha \verb|^|<br>$$<br>可以看出，$\xi$的指数映射的左上角$R$与旋转部分$\phi$对应，右上角的的平移部分则发生了一次以$J$为系数的线性变换。</p>
+<h2 id="李代数求导与扰动模型"><a href="#李代数求导与扰动模型" class="headerlink" title="李代数求导与扰动模型"></a>李代数求导与扰动模型</h2><h1 id="设我们对空间点-boldsymbol-p-进行旋转得到-boldsymbol-R-boldsymbol-p-。一种求导的方式是对-boldsymbol-R-进行一次扰动-Delta-boldsymbol-R-，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为-varphi-，有-frac-partial-boldsymbol-R-boldsymbol-p-partial-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-exp-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-I-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-varphi-verb-boldsymbol-R-boldsymbol-p-boldsymbol-varphi"><a href="#设我们对空间点-boldsymbol-p-进行旋转得到-boldsymbol-R-boldsymbol-p-。一种求导的方式是对-boldsymbol-R-进行一次扰动-Delta-boldsymbol-R-，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为-varphi-，有-frac-partial-boldsymbol-R-boldsymbol-p-partial-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-exp-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-I-boldsymbol-varphi-verb-exp-boldsymbol-phi-verb-boldsymbol-p-exp-boldsymbol-phi-verb-boldsymbol-p-boldsymbol-varphi-lim-boldsymbol-varphi-rightarrow-boldsymbol-0-frac-boldsymbol-varphi-verb-boldsymbol-R-boldsymbol-p-boldsymbol-varphi" class="headerlink" title="设我们对空间点$\boldsymbol p$进行旋转得到$\boldsymbol R \boldsymbol p$。一种求导的方式是对$\boldsymbol R$进行一次扰动$\Delta \boldsymbol R$，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为$\varphi$，有$$\frac{\partial (\boldsymbol R \boldsymbol p)}{\partial \boldsymbol \varphi}&amp;&#x3D;&amp;\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac{\exp(\boldsymbol \varphi \verb|^| ) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}{\boldsymbol \varphi} \&amp;&#x3D;&amp;\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac{(\boldsymbol I + \boldsymbol \varphi \verb|^|) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}{\boldsymbol \varphi} \&amp;&#x3D;&amp;\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac{\boldsymbol \varphi \verb|^| \boldsymbol R \boldsymbol p}{\boldsymbol \varphi}"></a>设我们对空间点$\boldsymbol p$进行旋转得到$\boldsymbol R \boldsymbol p$。一种求导的方式是对$\boldsymbol R$进行一次扰动$\Delta \boldsymbol R$，看结果相对于扰动的变化率。如果扰动乘在左边，设其对应李代数为$\varphi$，有<br>$$<br>\frac{\partial (\boldsymbol R \boldsymbol p)}{\partial \boldsymbol \varphi}<br>&amp;&#x3D;&amp;<br>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{\exp(\boldsymbol \varphi \verb|^| ) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}<br>{\boldsymbol \varphi} \<br>&amp;&#x3D;&amp;<br>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{(\boldsymbol I + \boldsymbol \varphi \verb|^|) \exp (\boldsymbol \phi \verb|^|) \boldsymbol p - \exp(\boldsymbol \phi \verb|^|) \boldsymbol p}<br>{\boldsymbol \varphi} \<br>&amp;&#x3D;&amp;<br>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{\boldsymbol \varphi \verb|^| \boldsymbol R \boldsymbol p}<br>{\boldsymbol \varphi}</h1><p>\lim_{\boldsymbol \varphi \rightarrow \boldsymbol 0} \frac<br>{-(\boldsymbol R \boldsymbol p) \verb|^| \boldsymbol \varphi}<br>{\boldsymbol \varphi}<br>&#x3D; -(\boldsymbol R \boldsymbol p) \verb|^|<br>$$<br>$SE(3)$上的扰动模型为<br>$$<br>\frac{\partial (\boldsymbol T \boldsymbol p)}{\partial \delta \boldsymbol \xi}<br>&#x3D; \left [ \begin{matrix}<br>\boldsymbol I &amp;-(\boldsymbol R \boldsymbol p + \boldsymbol t) \verb|^| \<br>\boldsymbol 0^T &amp;\boldsymbol 0^T<br>\end{matrix} \right ]<br>$$</p>
+<h1 id="5-相机与图像"><a href="#5-相机与图像" class="headerlink" title="5.相机与图像"></a>5.相机与图像</h1><p>单目相机成像过程：</p>
+<ol>
+<li>世界坐标系下有一个固定的点$P$，世界坐标为$\boldsymbol P_w$。</li>
+<li>相机的变换矩阵为$\boldsymbol T$，从而$P$的相机坐标为$\tilde{\boldsymbol P_c} &#x3D; \boldsymbol T \boldsymbol P_w &#x3D; [X, Y, Z]^T$。</li>
+<li>把相机坐标投影到归一化平面$Z&#x3D;1$上，得到归一化坐标$\boldsymbol P_c &#x3D; [X&#x2F;Z, Y&#x2F;Z, 1]^T$。</li>
+<li>有畸变时，根据畸变参数计算$\boldsymbol P_c$发生畸变后的坐标。</li>
+<li>左乘内参得到像素坐标$\boldsymbol P_{uv} &#x3D; \boldsymbol K \boldsymbol P_c$。</li>
+</ol>
+<h1 id="6-非线性优化"><a href="#6-非线性优化" class="headerlink" title="6.非线性优化"></a>6.非线性优化</h1><h2 id="图优化"><a href="#图优化" class="headerlink" title="图优化"></a>图优化</h2><p>图优化把优化问题表现为图的形式，图中的顶点表示优化变量，边表示误差项。这里的图也可以称为贝叶斯图或因子图。</p>
 
       
 
@@ -224,7 +253,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/posts/nerf" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/posts/slambook/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -238,18 +267,9 @@
   
 <nav id="article-nav">
   
-    <a href="/posts/slambook" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          十四讲学习笔记
-        
-      </div>
-    </a>
   
-  
-    <a href="/posts/d2l/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">《动手学深度学习》笔记</div>
+    <a href="/posts/nerf/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">NeRF学习笔记</div>
       <i class="icon-circle-right"></i>
     </a>
   
